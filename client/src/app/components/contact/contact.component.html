@@ -33,41 +33,40 @@
       <div class="contact-form-wrapper">
         <div class="form-card-1">
           <h4>Get in touch !</h4>
-          <form action="">
+          <form [formGroup]="contactUsForm">
             <div class="row form-wrapper">
               <div class="col-12">
                 <div class="form-group">
                   <label for="name">Your Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="John Doe">
+                  <input type="text" class="form-control" id="name" placeholder="John Doe" formControlName="name">
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
                   <label for="email">Email Address</label>
-                  <input type="email" class="form-control" id="email" placeholder="XwVpP@example.com">
+                  <input type="email" class="form-control" id="email" placeholder="XwVpP@example.com" formControlName="email">
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
                   <label for="subject">Subject</label>
-                  <input type="text" class="form-control" id="subject" placeholder="Your Question">
+                  <input type="text" class="form-control" id="subject" placeholder="Your Question" formControlName="subject">
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
                   <label for="comment">Comment</label>
-                  <textarea class="form-control" id="comment" rows="5" placeholder="Your Message"></textarea>
+                  <textarea class="form-control" id="comment" rows="5" placeholder="Your Message" formControlName="message"></textarea>
                 </div>
               </div>
 
               <div class="col-12">
                 <div class="form-group">
-                  <button type="submit" class="btn-1">Send Message</button>
+                  <button type="submit" class="btn-1" (click)="contactUs()" [disabled]="loading">{{loading?'Sending...':'Send Message'}}</button>
                 </div>
-
               </div>
             </div>
           </form>
@@ -83,8 +82,8 @@
         <div class="title">
           Phone
         </div>
-        <p>The phrasal sequence of the is now so that many campaign and benefit</p>
-        <div class="content">+152 534-468-854</div>
+        <p>Reach out to us for immediate support and inquiries</p>
+        <div class="content">{{utilities.contactNumber}}</div>
       </div>
       <div class="col-12 col-md-4 contact-card">
         <div class="icon">
@@ -93,8 +92,8 @@
         <div class="title">
           Email
         </div>
-        <p>The phrasal sequence of the is now so that many campaign and benefit</p>
-        <div class="content">XwVpP@example.com</div>
+        <p>Send us an email, and we’ll respond to your needs promptly</p>
+        <div class="content">{{utilities.contactEmail}}</div>
       </div>
       <div class="col-12 col-md-4 contact-card">
         <div class="icon">
@@ -103,8 +102,8 @@
         <div class="title">
           Location
         </div>
-        <p>The phrasal sequence of the is now so that many campaign and benefit</p>
-        <div class="content">San Francisco, CA</div>
+        <p>Visit us or get in touch with our team in {{utilities.contactLocation}}</p>
+        <div class="content">{{utilities.contactLocation}}</div>
       </div>
     </div>
   </div>

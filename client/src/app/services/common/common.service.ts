@@ -24,4 +24,18 @@ export class CommonService {
     });
     return this.http.put(`${this.baseUrl}/news-latter/subscribe`, {email: email}, {headers});
   }
+
+  contactUs(contactUsDTO: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Basic ' + btoa('admin:password')
+    });
+    return this.http.post(`${this.baseUrl}/email/contact-us`, contactUsDTO, {headers});
+  }
+
+  personalContact(personalContactDTO: any): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': 'Basic ' + btoa('admin:password')
+    });
+    return this.http.post(`${this.baseUrl}/email/personal-contact`, personalContactDTO, {headers});
+  }
 }

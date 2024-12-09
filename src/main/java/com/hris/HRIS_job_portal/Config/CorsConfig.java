@@ -1,5 +1,7 @@
 package com.hris.HRIS_job_portal.Config;
 
+import com.hris.HRIS_job_portal.Utils.ConfigUtility;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,13 +15,16 @@ import java.util.Arrays;
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
+    @Autowired
+    private ConfigUtility configUtility;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // Allow CORS for all endpoints
-                .allowedOrigins("http://localhost:4200", "https://accounts.google.com", "https://www.github.com") // Allow requests from this origin
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow specific HTTP methods
-                .allowedHeaders("*") // Allow all headers
-                .allowCredentials(true); // Allow sending credentials
+        registry.addMapping("/**")
+                .allowedOrigins(configUtility.getProperty("ALLOWED_ORIGIN_1"), configUtility.getProperty("ALLOWED_ORIGIN_2"), configUtility.getProperty("ALLOWED_ORIGIN_3"), configUtility.getProperty("ALLOWED_ORIGIN_4"), configUtility.getProperty("ALLOWED_ORIGIN_5"), configUtility.getProperty("ALLOWED_ORIGIN_6"))
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     @Bean
@@ -27,7 +32,7 @@ public class CorsConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "https://accounts.google.com", "https://www.github.com")); // Allow multiple origins
+        config.setAllowedOrigins(Arrays.asList(configUtility.getProperty("ALLOWED_ORIGIN_1"), configUtility.getProperty("ALLOWED_ORIGIN_2"), configUtility.getProperty("ALLOWED_ORIGIN_3"), configUtility.getProperty("ALLOWED_ORIGIN_4"), configUtility.getProperty("ALLOWED_ORIGIN_5"), configUtility.getProperty("ALLOWED_ORIGIN_6")));
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

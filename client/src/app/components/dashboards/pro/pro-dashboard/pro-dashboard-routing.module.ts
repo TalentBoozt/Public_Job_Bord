@@ -15,7 +15,8 @@ import {AdminProGuard} from "../../../../guards/admin-pro.guard";
 import {AuthGuard} from "../../../../guards/auth.guard";
 import {AdminGuard} from "../../../../guards/admin.guard";
 import {ProApplicantsDbComponent} from "../pro-applicants-db/pro-applicants-db.component";
-import {CompanyAnalysisComponent} from "../../free/company-analysis/company-analysis.component";
+import {JobPostComponent} from "../../free/job-post/job-post.component";
+import {ProCompanyAnalysisComponent} from "../pro-company-analysis/pro-company-analysis.component";
 
 const routes: Routes = [
   {
@@ -28,9 +29,10 @@ const routes: Routes = [
       { path: 'personal-profile-settings', component: PersonalProfileSettingsComponent, canActivate: [AdminProGuard, AuthGuard] },
       { path: 'business-profile-my', component: BusinessProfileMyComponent, canActivate: [AdminProGuard, AuthGuard] },
       { path: 'business-profile-settings', component: BusinessProfileSettingsComponent, canActivate: [AdminProGuard, AuthGuard] },
+      { path: 'post-job', component: JobPostComponent, canActivate: [AdminProGuard, AuthGuard] },
       { path: 'company-jobs', component: CompanyJobsMyComponent, canActivate: [AdminProGuard, AuthGuard] },
       { path: 'applicants', component: ProApplicantsDbComponent, canActivate: [AdminProGuard, AdminGuard] },
-      { path: 'company-analysis', component: CompanyAnalysisComponent, canActivate: [AdminProGuard, AdminGuard] }
+      { path: 'company-analysis', component: ProCompanyAnalysisComponent, canActivate: [AdminProGuard, AdminGuard] }
     ],
     canActivate: [AdminProGuard, AuthGuard]
   }

@@ -1,0 +1,28 @@
+.dashboard {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.table-wrapper{
+  margin-top: 10px;
+  height: auto;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  color: var(--color-text-200);
+}
+
+th {
+  color: Var(--color-text-100);
+  background-color: var(--color-surface-mixed-100);
+}

@@ -14,7 +14,7 @@ import {UnloadService} from "../../../services/common/unload.service";
 declare var bootstrap: any;
 
 @Component({
-  selector: 'app-job-post',
+  selector: 'app-job-post-open',
   templateUrl: './job-post.component.html',
   styleUrls: ['./job-post.component.scss']
 })
@@ -47,7 +47,7 @@ export class JobPostComponent implements AfterViewInit, OnInit, CanComponentDeac
   cphone: any = '';
   chq: any = '';
   cLogo: any = '';
-  formLocked: boolean = true;
+  formLocked: boolean = false;
 
   postedJobs: any = [];
 
@@ -62,7 +62,7 @@ export class JobPostComponent implements AfterViewInit, OnInit, CanComponentDeac
     minSalary: new FormControl(''),
     maxSalary: new FormControl(''),
     totalOpenings: new FormControl('', [Validators.required]),
-    ageRange: new FormControl(''),
+    ageRange: new FormControl('18-30'),
     employeeType: new FormControl('', [Validators.required]),
     locationType: new FormControl('', [Validators.required]),
     skills: new FormControl(''),
@@ -72,8 +72,8 @@ export class JobPostComponent implements AfterViewInit, OnInit, CanComponentDeac
     education: new FormControl(''),
     responsibilities: new FormControl(''),
     offer: new FormControl(''),
-    es: new FormControl('', [Validators.required]),
-    exs: new FormControl('', [Validators.required]),
+    es: new FormControl('BSc', [Validators.required]),
+    exs: new FormControl('0-2 years', [Validators.required]),
     address: new FormControl(''),
     country: new FormControl('', [Validators.required]),
     state: new FormControl('', [Validators.required]),
@@ -180,6 +180,7 @@ export class JobPostComponent implements AfterViewInit, OnInit, CanComponentDeac
 
   getCompany(id: any) {
     this.loading = true;
+    this.formLocked = true;
     if (id) {
       this.companyService.fetchFullCompany(id).subscribe(
         (data) => {
@@ -263,14 +264,14 @@ export class JobPostComponent implements AfterViewInit, OnInit, CanComponentDeac
     }]
 
     if (this.companyLevel === '2'){
-      if (this.postedJobs[0].postedJobs.length >= 3) {
+      if (this.postedJobs[0]?.postedJobs?.length >= 3) {
         this.alertService.warningMessage('You Reached Maximum Job Post Limit. Upgrade to Add More!', 'Warning');
         return;
       }
     }
 
     if (this.companyLevel === '3'){
-      if (this.postedJobs[0].postedJobs.length >= 10) {
+      if (this.postedJobs[0]?.postedJobs.length >= 10) {
         this.alertService.warningMessage('You Reached Maximum Job Post Limit. Upgrade to Add More!', 'Warning');
         return;
       }

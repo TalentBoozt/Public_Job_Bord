@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, NgZone, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {ValueIncrementService} from "../../services/value-increment.service";
 import {EmployeeService} from "../../services/employee.service";
@@ -9,6 +9,7 @@ import {CompanyService} from "../../services/company.service";
 import {AlertsService} from "../../services/alerts.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {CommonService} from "../../services/common/common.service";
+import {Utilities} from "../../shared/utilities/utilities";
 
 @Component({
   selector: 'app-home',
@@ -54,6 +55,33 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   isSubscribed: boolean = false;
 
+  utilities = Utilities;
+
+  aText: string[] = [
+    "Looking to hire the",
+    "best Talent?"
+  ];
+  bText: string[] = [
+    "Looking for your",
+    "dream job?"
+  ];
+  iSpeed: number = 100;
+  iIndex: number = 0;
+  iIndex2: number = 0;
+  iArrLength: number = this.aText[0].length;
+  iArrLength2: number = this.bText[0].length;
+  iScrollAt: number = 20;
+  iTextPos: number = 0;
+  iTextPos2: number = 0;
+  sContents: string = '';
+  sContents2: string = '';
+  iRow: number = 0;
+  iRow2: number = 0;
+  destination: string = '';
+  destination2: string = '';
+
+  showNavBar: boolean = false;
+
   newsLetterForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
   })
@@ -65,11 +93,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
               private cookieService: AuthService,
               private alertService: AlertsService,
               private commonService: CommonService,
-              private toastr: ToastrService) {
-  }
+              private toastr: ToastrService) {}
 
   async ngOnInit(): Promise<any> {
     this.employeeId = this.cookieService.userID();
+    this.typewriter();
+    this.typewriter2();
     await this.getEmployee(this.employeeId).subscribe((data) => {
 
     });
@@ -83,11 +112,61 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.setupIntersectionObserver()
+    this.setupIntersectionObserver();
     const icons = document.querySelectorAll('.material-icons');
     icons.forEach((icon) => {
       icon.setAttribute('translate', 'no');
     });
+  }
+
+  typewriter(): void {
+    this.sContents = ' ';
+    this.iRow = Math.max(0, this.iIndex - this.iScrollAt);
+
+    // Assemble lines to display
+    while (this.iRow < this.iIndex) {
+      this.sContents += this.aText[this.iRow++] + '<br />';
+    }
+
+    // Update destination content
+    this.destination = this.sContents + this.aText[this.iIndex].substring(0, this.iTextPos) + "_";
+
+    // Increment position or move to the next line
+    if (this.iTextPos++ === this.iArrLength) {
+      this.iTextPos = 0;
+      this.iIndex++;
+      if (this.iIndex !== this.aText.length) {
+        this.iArrLength = this.aText[this.iIndex].length;
+        setTimeout(() => this.typewriter(), 500);
+      }
+    } else {
+      setTimeout(() => this.typewriter(), this.iSpeed);
+    }
+  }
+
+  typewriter2(): void{
+    this.sContents2 = ' ';
+    this.iRow2 = Math.max(0, this.iIndex2 - this.iScrollAt);
+
+    // Assemble lines to display
+    while (this.iRow2 < this.iIndex2) {
+      this.sContents2 += this.bText[this.iRow2++] + '<br />';
+    }
+
+    // Update destination content
+    this.destination2 = this.sContents2 + this.bText[this.iIndex2].substring(0, this.iTextPos2) + "_";
+
+    // Increment position or move to the next line
+    if (this.iTextPos2++ === this.iArrLength2) {
+      this.iTextPos2 = 0;
+      this.iIndex2++;
+      if (this.iIndex2 !== this.bText.length) {
+        this.iArrLength2 = this.bText[this.iIndex2].length;
+        setTimeout(() => this.typewriter2(), 500);
+      }
+    } else {
+      setTimeout(() => this.typewriter2(), this.iSpeed);
+    }
   }
 
   getEmployee(id: any): Observable<any> {
@@ -142,6 +221,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     return this.companyService.fetchCompanies().pipe(
       tap(data => {
         this.companyDataStore = data;
+        this.companyDataStore = this.companyDataStore?.filter((data:any) => data.name !== null && data.shortDescription !== null || data.companyStory !== null);
         this.branchesAch = this.companyDataStore?.length || 0;
         localStorage.setItem('branchesAch', this.branchesAch.toString());
         this.loading = false;
@@ -211,20 +291,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
   }
 
-  filterJobs(): any[] {
-    this.webDeveloperJobs = this.jobAdDataStore?.filter((item: any) => item.title?.toLowerCase().trim() === 'web developer').length;
-    this.graphicDesignerJobs = this.jobAdDataStore?.filter((item: any) => item.title?.toLowerCase().trim() === 'graphic designer').length;
-    this.dataEntryOperatorJobs = this.jobAdDataStore?.filter((item: any) => item.title?.toLowerCase().trim() === 'data entry operator').length;
-    this.businessDevelopmentJobs = this.jobAdDataStore?.filter((item: any) => item.title?.toLowerCase().trim() === 'business development').length;
-
-    return [
-      {
-        webDeveloperJobs: this.webDeveloperJobs,
-        graphicDesignerJobs: this.graphicDesignerJobs,
-        dataEntryOperatorJobs: this.dataEntryOperatorJobs,
-        businessDevelopmentJobs: this.businessDevelopmentJobs
-      }
-    ]
+  filterJobs(name: any): any {
+    return this.jobAdDataStore?.filter((item: any) => item.title?.toLowerCase().trim() === name.toLowerCase().trim()).length;
   }
 
   incrementJobsValue(targetValue: number, interval: number) {

@@ -25,6 +25,9 @@ import {LocationStrategy, NgOptimizedImage, PathLocationStrategy} from "@angular
 import {OAuthModule} from "angular-oauth2-oidc";
 import {SkipXsrfInterceptor} from "./Config/SkipXsrfInterceptor";
 import {SharedComponentModule} from "./shared/modules/shared-component.module";
+import {FooterModule} from "./components/shared/footer/footer.module";
+import {HeaderModule} from "./components/shared/header/header.module";
+import {AngularFirePerformanceModule} from "@angular/fire/compat/performance";
 
 @NgModule({
   declarations: [
@@ -48,17 +51,20 @@ import {SharedComponentModule} from "./shared/modules/shared-component.module";
         AngularFirestoreModule,
         AngularFireStorageModule,
         AngularFireAuthModule,
+        AngularFirePerformanceModule,
         SharedPipesModule,
         HttpClientModule,
         ToastrModule.forRoot({
-            positionClass: 'toast-bottom-right',
+            positionClass: 'toast-top-right',
             preventDuplicates: true,
             maxOpened: 3,
             timeOut: 5000,
         }),
         OAuthModule.forRoot(),
         SharedComponentModule,
-        NgOptimizedImage
+        NgOptimizedImage,
+        FooterModule,
+        HeaderModule
     ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: SkipXsrfInterceptor, multi: true},

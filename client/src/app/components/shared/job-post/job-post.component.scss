@@ -77,3 +77,9 @@
     cursor: not-allowed;
   }
 }
+
+.mat-typography.modal-open .modal-content{
+  overflow-x: hidden !important;
+
+
+}

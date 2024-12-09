@@ -78,7 +78,7 @@ export class JobComponent implements OnInit, AfterViewInit {
         this.userSavedIds = this.employee.employee.savedJobs.map((job: any) => job.jobId);
       },
       (error: any) => {
-        this.alertService.warningMessage('Please Login First to Apply Jobs', 'Reminder');
+        this.alertService.warningMessage('Please login first to apply for jobs', 'Reminder');
       }
     );
   }
@@ -118,7 +118,7 @@ export class JobComponent implements OnInit, AfterViewInit {
   }
 
   filterJobs(): void {
-    // Filter jobs based on both inputs (title, location, filters)
+    this.isSearchResultNotFound = false;
     this.filteredJobAds = this.jobAdDataStore.filter((data: any) => {
       const titleMatch = this.targetInput1 ? data.title.toLowerCase().includes(this.targetInput1.toLowerCase()) : true;
       const locationMatch = this.targetInput2 ? data.location.toLowerCase().includes(this.targetInput2.toLowerCase()) : true;

@@ -17,12 +17,12 @@
         </div>
 
         <div class="profile-btn" (click)="gotoSettings()">
-          <button><i class="material-icons">settings</i></button>
+          <button><i class="material-icons">edit</i><span class="d-none d-sm-block">_edit_</span></button>
         </div>
       </div>
 
       <div class="row my-3 second-content">
-        <div class="col-12 col-md-6 col-lg-8 left-side">
+        <div class="col-12 col-lg-8 left-side">
           <div *ngIf="employee.employee.intro">
             <h5>{{employee.employee.firstname}} {{employee.employee.lastname}}</h5>
             <p *ngFor="let intro of employee.employee.intro.split('\n')">{{intro}}</p>
@@ -90,42 +90,46 @@
             </div>
           </div>
 
+          <div class="container">
+            <app-year-view></app-year-view>
+          </div>
+
           <div class="contact-form-wrapper">
             <div class="form-card-1">
               <h5>Contact Me:</h5>
-              <form action="">
-                <div class="row form-wrapper">
+              <form [formGroup]="contactUsForm">
+                <div class="row form-wrapper w-100">
                   <div class="col-12 col-md-6">
                     <div class="form-group">
                       <label for="name">Your Name</label>
-                      <input type="text" class="form-control" id="name" placeholder="John Doe">
+                      <input type="text" class="form-control" id="name" placeholder="John Doe" formControlName="name">
                     </div>
                   </div>
 
                   <div class="col-12 col-md-6">
                     <div class="form-group">
                       <label for="email">Email Address</label>
-                      <input type="email" class="form-control" id="email" placeholder="XwVpP@example.com">
+                      <input type="email" class="form-control" id="email" placeholder="XwVpP@example.com" formControlName="email">
                     </div>
                   </div>
 
                   <div class="col-12">
                     <div class="form-group">
                       <label for="subject">Subject</label>
-                      <input type="text" class="form-control" id="subject" placeholder="Your Question">
+                      <input type="text" class="form-control" id="subject" placeholder="Your Question" formControlName="subject">
                     </div>
                   </div>
 
                   <div class="col-12">
                     <div class="form-group">
                       <label for="comment">Comment</label>
-                      <textarea class="form-control" id="comment" rows="5" placeholder="Your Message"></textarea>
+                      <textarea class="form-control" id="comment" rows="5" placeholder="Your Message" formControlName="message"></textarea>
                     </div>
                   </div>
 
                   <div class="col-12">
                     <div class="form-group">
-                      <button type="submit" class="btn-1">Send Message</button>
+                      <button type="submit" class="btn-1" [disabled]="mailLoading" (click)="contact()">{{mailLoading?'Sending...':'Send Message'}}</button>
                     </div>
                   </div>
                 </div>

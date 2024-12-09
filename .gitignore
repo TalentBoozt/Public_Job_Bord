@@ -38,3 +38,15 @@ build/
 
 ### temp assets ###
 /client/src/assets/temp/
+
+### test files ###
+/client/test/
+/client/dist/
+
+/client/src/app/shared/utilities/utilities.ts
+/client/src/app/shared/utilities/pricing.utilities.ts
+/client/src/app/shared/utilities/products.utilities.ts
+/client/src/app/shared/utilities/faq.utilities.ts
+*.*~
+
+/GeoLite2-City.mmdb

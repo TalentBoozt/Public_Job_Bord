@@ -2,3 +2,54 @@ h3{
   margin: max(20px, 3vw) 0;
   text-align: center;
 }
+
+.applicants-list-row{
+  border-bottom: 1px solid var(--color-secondary-600);
+}
+
+.see-more-btn{
+  cursor: pointer;
+  border: 1px solid var(--color-secondary-600);
+  border-radius: 5px;
+  background-color: var(--color-surface-mixed-200);
+  color: var(--color-text-200);
+  padding: 2px 8px;
+
+  i{
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
+  }
+
+  &:hover{
+    background-color: var(--color-surface-mixed-300);
+  }
+}
+
+.danger{
+  color: var(--color-danger-200);
+
+  &:hover{
+    color: var(--color-danger-100);
+  }
+}
+
+.fa.fa-star{
+  color: #FFD700;
+  font-size: 16px;
+}
+.fa.fa-circle{
+  color: #ff1121;
+  font-size: 16px;
+}
+
+.btn-1{
+  font-size: 16px;
+  width: fit-content;
+
+  .material-icons{
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+  }
+}
