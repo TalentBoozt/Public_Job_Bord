@@ -331,7 +331,7 @@
 
           <div class="col-12">
             <div class="form-group">
-              <button type="submit" [disabled]="formLocked" class="btn-1"
+              <button id="PJB_JP_JobPost" type="submit" [disabled]="formLocked" class="btn-1"
                       (click)="jobId ? updateJob() : saveJobPost()">{{formLocked ? 'Locked' : jobId ? 'Update' : 'Post Now'}}</button>
             </div>
           </div>
