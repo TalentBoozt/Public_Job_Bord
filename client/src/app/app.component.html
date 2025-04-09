@@ -89,7 +89,7 @@
 
     <div class="cookie-banner" *ngIf="!isCookiesAccepted">
       <p>This website uses cookies to ensure you get the best experience on our website. <a routerLink="/privacy-policy">Privacy Policy</a></p>
-      <button (click)="acceptCookies()">GOT IT</button>
+      <button id="PJB_APP_AcceptCookie" type="button" (click)="acceptCookies()">GOT IT</button>
     </div>
 
     <app-header *ngIf="showNavbar"></app-header>
@@ -130,7 +130,7 @@
         <div class="modal-footer">
           <button type="button" id="news_model_close_main" class="btn btn-secondary" data-bs-dismiss="modal">Cancel
           </button>
-          <button type="button" class="btn-1" [disabled]="loading"
+          <button id="PJB_APP_Subscribe" type="button" class="btn-1" [disabled]="loading"
                   (click)="subscribeNewsLatter()">{{loading ? 'Subscribing...' : 'Subscribe'}}</button>
         </div>
       </div>
