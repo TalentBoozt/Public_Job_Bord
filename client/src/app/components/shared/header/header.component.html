@@ -41,8 +41,17 @@
           </li>
         </ul>
       </li>
-      <li *ngIf="!isTokenFound" class="d-block d-lg-none nav-item" (click)="collapseNavbar()">
-        <a class="nav-link btn-border" routerLink="/login" [class.active]="isActive('/login')">Sign in</a>
+      <li *ngIf="!isTokenFound" class="nav-item dropdown d-block d-lg-none" (click)="collapseNavbar()">
+        <button class="nav-link btn-border" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sign In</button>
+
+        <ul class="dropdown-menu">
+          <li>
+            <span class="dropdown-item" (click)="login('seeker'); collapseNavbar()">Job Seeker</span>
+          </li>
+          <li>
+            <span class="dropdown-item" (click)="login('recruiter'); collapseNavbar()">Recruiter</span>
+          </li>
+        </ul>
       </li>
       <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid" style="justify-content: flex-end!important;">
@@ -108,8 +117,17 @@
                   <i class="material-icons">search</i>
                 </div>
               </li>
-              <li *ngIf="!isTokenFound" class="d-none d-lg-block nav-item" (click)="collapseNavbar()">
-                <a class="nav-link btn-border" routerLink="/login" [class.active]="isActive('/login')">SignIn</a>
+              <li *ngIf="!isTokenFound" class="nav-item dropdown d-none d-lg-block" (click)="collapseNavbar()">
+                <button class="nav-link btn-border" role="button" data-bs-toggle="dropdown" aria-expanded="false">Sign In</button>
+
+                <ul class="dropdown-menu">
+                  <li>
+                    <span class="dropdown-item" (click)="login('seeker'); collapseNavbar()">Job Seeker</span>
+                  </li>
+                  <li>
+                    <span class="dropdown-item" (click)="login('recruiter'); collapseNavbar()">Recruiter</span>
+                  </li>
+                </ul>
               </li>
               <li *ngIf="isTokenFound" class="nav-item d-none d-lg-block ms-2 dropdown">
                 <div class="profile-wrapper" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -157,7 +175,8 @@
 
   <div class="search-results-wrapper" *ngIf="openSearchResults">
     <div class="search-result" *ngFor="let r of filterSearchResults()">
-      <a [routerLink]="r.routerLink">{{r.name}}</a>
+      <a *ngIf="r.routerLink" [routerLink]="r.routerLink">{{r.name}}</a>
+      <a *ngIf="r.url" href="{{r.url}}" target="_self">{{r.name}}</a>
     </div>
     <div class="not-found" *ngIf="filterSearchResults().length <= 0">No results found. :(</div>
   </div>

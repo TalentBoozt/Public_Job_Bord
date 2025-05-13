@@ -8,6 +8,7 @@ import {ProductsUtilities} from "../../shared/utilities/products.utilities";
 import {CartService} from "../../services/payment/cart.service";
 import {WindowService} from "../../services/common/window.service";
 import {Meta, Title} from "@angular/platform-browser";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-for-companies',
@@ -50,6 +51,7 @@ export class ForCompaniesComponent implements OnInit, AfterViewInit {
 
   constructor(private windowService: WindowService,
               private router: Router,
+              private cookieService: AuthService,
               private companyService: CompanyService,
               private meta: Meta, private title: Title,
               private cartService: CartService) { }
@@ -157,6 +159,16 @@ export class ForCompaniesComponent implements OnInit, AfterViewInit {
 
   gotoCart(cart: any, url: string) {
     this.cartService.addToCart(cart);
-    this.router.navigate([url]);
+    if (url.includes('https://')){
+      const referrer = this.cookieService.getReferer();
+      const platform = this.cookieService.getPlatform();
+      const promo = this.cookieService.getPromotion();
+      const aElm: HTMLAnchorElement = document.createElement('a');
+      aElm.href = 'https://login.talentboozt.com/register?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo+'&rb=employer&lv=2';
+      aElm.target = '_self';
+      aElm.click();
+    } else {
+      this.router.navigate([url]);
+    }
   }
 }

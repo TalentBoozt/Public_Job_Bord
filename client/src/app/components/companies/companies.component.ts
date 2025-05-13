@@ -5,6 +5,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import {Observable, tap} from "rxjs";
 import {WindowService} from "../../services/common/window.service";
 import {Meta, Title} from "@angular/platform-browser";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-companies',
@@ -41,6 +42,7 @@ export class CompaniesComponent implements OnInit, AfterViewInit{
   constructor(private windowService: WindowService,
               private router: Router,
               private meta: Meta, private title: Title,
+              private cookieService: AuthService,
               private companyService: CompanyService) { }
 
   async ngOnInit() : Promise<any> {
@@ -169,6 +171,12 @@ export class CompaniesComponent implements OnInit, AfterViewInit{
   }
 
   moveToRegister() {
-    this.router.navigate(['/register'], {queryParams: {from: 'companies'}});
+    const referrer = this.cookieService.getReferer();
+    const platform = this.cookieService.getPlatform();
+    const promo = this.cookieService.getPromotion();
+    const aElm: HTMLAnchorElement = document.createElement('a');
+    aElm.href = 'https://login.talentboozt.com/register?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo+'&rb=employer&lv=2';
+    aElm.target = '_self';
+    aElm.click();
   }
 }

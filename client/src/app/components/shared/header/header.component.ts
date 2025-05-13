@@ -9,6 +9,7 @@ import {AuthService} from "../../../services/auth.service";
 import {commonSearchResults} from "../../../shared/data-store/common-search-results";
 import { HttpErrorResponse } from "@angular/common/http";
 import {LinkedInAuthService} from "../../../services/authentication/linked-in-auth.service";
+import {CommonService} from "../../../services/common/common.service";
 
 @Component({
   selector: 'app-header',
@@ -36,6 +37,7 @@ export class HeaderComponent {
               private renderer: Renderer2,
               private employeeService: EmployeeService,
               private credentialsService: CredentialService,
+              private commonService: CommonService,
               private linkedInAuthService: LinkedInAuthService,
               private alertService: AlertsService,
               private cookieService: AuthService) {
@@ -137,9 +139,27 @@ export class HeaderComponent {
   }
 
   logout() {
-    this.cookieService.logout()
-    this.removeUnwantedSession()
-    this.linkedInAuthService.logoutFromLinkedIn().then(r => {});
-    this.router.navigate(['/login']);
+    this.commonService.logout().subscribe(() => {
+      this.cookieService.logout()
+      this.removeUnwantedSession()
+      this.linkedInAuthService.logoutFromLinkedIn().then(r => {});
+      this.alertService.successMessage('You have been logged out successfully.', 'Success');
+    });
+  }
+
+  login(profile: string) {
+    const referrer = this.cookieService.getReferer();
+    const platform = this.cookieService.getPlatform();
+    const promo = this.cookieService.getPromotion();
+    const aElm: HTMLAnchorElement = document.createElement('a');
+    if (profile === 'seeker'){
+      aElm.href = 'https://login.talentboozt.com/login?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo+'&rb=candidate&lv=1';
+    } else if (profile === 'recruiter'){
+      aElm.href = 'https://login.talentboozt.com/login?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo+'&rb=employer&lv=2';
+    } else {
+      aElm.href = 'https://login.talentboozt.com/login?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo;
+    }
+    aElm.target = '_self';
+    aElm.click();
   }
 }

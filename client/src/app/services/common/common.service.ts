@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 export class CommonService {
 
   baseUrl = environment.apiUrl;
+  baseUrlSimple = environment.apiUrlSimple;
   constructor(private http: HttpClient) { }
 
   requestMoreData(email: string): Observable<any> {
@@ -76,5 +77,17 @@ export class CommonService {
       'Authorization': 'Basic ' + btoa('admin:password')
     });
     return this.http.post(`${this.baseUrl}/redirect/validate-url`, {domain: url}, {headers});
+  }
+
+  getSession(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrlSimple}/sso/session`, { withCredentials: true });
+  }
+
+  getTokens(email: string): Observable<any> {
+    return this.http.get<any>(`${this.baseUrlSimple}/api/auth/getTokens/${email}`, { withCredentials: true });
+  }
+
+  logout(): Observable<any> {
+    return this.http.get(`${this.baseUrlSimple}/sso/logout`, { withCredentials: true });
   }
 }
