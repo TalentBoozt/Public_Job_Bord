@@ -4,6 +4,7 @@ import {CartService} from "../../services/payment/cart.service";
 import {Router} from "@angular/router";
 import {WindowService} from "../../services/common/window.service";
 import {Meta, Title} from "@angular/platform-browser";
+import {AuthService} from "../../services/auth.service";
 
 @Component({
   selector: 'app-prising',
@@ -16,6 +17,7 @@ export class PrisingComponent implements AfterViewInit, OnInit{
 
   constructor(private windowService: WindowService,
               private cartService: CartService,
+              private cookieService: AuthService,
               private meta: Meta, private title: Title,
               private router: Router) {
   }
@@ -42,6 +44,16 @@ export class PrisingComponent implements AfterViewInit, OnInit{
 
   gotoCart(cart: any, url: string) {
     this.cartService.addToCart(cart);
-    this.router.navigate([url]);
+    if (url.includes('https://')){
+      const referrer = this.cookieService.getReferer();
+      const platform = this.cookieService.getPlatform();
+      const promo = this.cookieService.getPromotion();
+      const aElm: HTMLAnchorElement = document.createElement('a');
+      aElm.href = 'https://login.talentboozt.com/register?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo+'&rb=employer&lv=2';
+      aElm.target = '_self';
+      aElm.click();
+    } else {
+      this.router.navigate([url]);
+    }
   }
 }

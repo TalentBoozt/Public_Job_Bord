@@ -84,46 +84,29 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit() {
-    localStorage.setItem('demoMode', 'false');
-    if (this.windowService.nativeDocument) {
-      setTimeout(() => {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-          loadingScreen.style.display = 'none';
-        }
-      },1500);
-      const appRoot = document.querySelector('app-root') as HTMLElement;
-      if (appRoot) {
-        appRoot.style.display = 'block';
-      }
-    }
+    if (this.windowService.nativeDocument && this.windowService.nativeSessionStorage && this.windowService.nativeLocalStorage) {
+      localStorage.setItem('demoMode', 'false');
 
-    this.route.queryParams.subscribe(params => {
-      const platform = params['platform'] || 'jobPortal';
-      const ref = params['ref'] || 'talentboozt';
-      const promo = params['promo'] || 'no';
-      this.cookieService.createPlatform(platform);
-      this.cookieService.createReferer(ref);
-      this.cookieService.createPromotion(promo);
-    });
+      Promise.resolve().then(() => {
+        this.fetchTokensFromLogin();
+      });
 
-    this.employeeId = this.cookieService.userID();
-    this.employeeLevel = this.cookieService.level();
-    this.themeService.applyTheme();
+      this.loadingScreen();
 
-    this.isSubscribe = this.cookieService.isNewsletter();
-    if (this.cookieService.isCookiesAccepted()) {
-      this.isCookiesAccepted = true;
-    }
+      this.route.queryParams.subscribe(params => {
+        const platform = params['platform'] || 'jobPortal';
+        const ref = params['ref'] || 'talentboozt';
+        const promo = params['promo'] || 'no';
+        this.cookieService.createPlatform(platform);
+        this.cookieService.createReferer(ref);
+        this.cookieService.createPromotion(promo);
+      });
 
-    if (this.windowService.nativeSessionStorage && this.windowService.nativeDocument) {
-      if (sessionStorage.getItem('newsLatter') != 'true' && !this.isSubscribe) {
-        setTimeout(() => {
-          const model_open = document.getElementById('news_model_open_main');
-          model_open?.click();
-          sessionStorage.setItem('newsLatter', 'true');
-        }, 10000)
-      }
+      this.employeeId = this.cookieService.userID();
+      this.employeeLevel = this.cookieService.level();
+      this.themeService.applyTheme();
+
+      this.acceptCookiesAndOpenNewsLetter();
     }
   }
 
@@ -140,6 +123,65 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     this.removeUnwantedSession()
+  }
+
+  loadingScreen() {
+    setTimeout(() => {
+      const loadingScreen = document.getElementById('loading-screen');
+      if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+      }
+    },1500);
+    const appRoot = document.querySelector('app-root') as HTMLElement;
+    if (appRoot) {
+      appRoot.style.display = 'block';
+    }
+  }
+
+  autoLogin() {
+    this.commonService.getSession().subscribe({
+      next: (userData) => {
+        this.cookieService.createUserID(userData.employeeId);
+        this.cookieService.createLevel(userData.userLevel);
+        this.commonService.getTokens(userData.email).subscribe((tokens) => {
+          this.cookieService.createAuthToken(tokens.accessToken);
+          this.cookieService.createRefreshToken(tokens.refreshToken);
+        })
+        this.cookieService.unlock();
+        if (userData.userLevel == '2') {
+          this.cookieService.createAdmin(userData.email);
+          userData.organizations?.forEach((organization: any) => {
+            this.cookieService.createOrganizationID(organization.jobPortal || '');
+          })
+        } else if (userData.userLevel == '3') {
+          this.cookieService.createProAdmin(userData.email);
+          userData.organizations?.forEach((organization: any) => {
+            this.cookieService.createOrganizationID(organization.jobPortal || '');
+          })
+        }
+      },
+      error: () => {
+        // fall back to login or registration screen
+        this.alertService.successMessage('Claim your free account today!', 'Talent Boozt ✨');
+      }
+    });
+  }
+
+  fetchTokensFromLogin(){
+
+    if (this.windowService.nativeWindow) {
+      const rawQuery = window.location.search;
+      const params = new URLSearchParams(rawQuery);
+
+      const accessToken = params.get('auth');
+      const refreshToken = params.get('reft');
+
+      if (accessToken && refreshToken) {
+        this.cookieService.createAuthToken(accessToken);
+        this.cookieService.createRefreshToken(refreshToken);
+        this.autoLogin();
+      }
+    }
   }
 
   markAttendance() {
@@ -199,6 +241,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       }, error => {
         // Handle error (maybe show an alert to the user)
       });
+    }
+  }
+
+  acceptCookiesAndOpenNewsLetter() {
+    this.isSubscribe = this.cookieService.isNewsletter();
+    if (this.cookieService.isCookiesAccepted()) {
+      this.isCookiesAccepted = true;
+    }
+
+    if (sessionStorage.getItem('newsLatter') != 'true' && !this.isSubscribe) {
+      setTimeout(() => {
+        const model_open = document.getElementById('news_model_open_main');
+        model_open?.click();
+        sessionStorage.setItem('newsLatter', 'true');
+      }, 15000)
     }
   }
 

@@ -101,7 +101,7 @@ export class LoginComponent implements AfterViewInit, OnInit {
             localStorage.removeItem('password');
           }
 
-          if (response.role === 'candidate') {
+          if (response.role === 'candidate' || !response.role) {
             this.cookieService.createUserID(response.employeeId);
             this.cookieService.createLevel(response.userLevel);
             this.cookieService.createAuthToken(response.token);
