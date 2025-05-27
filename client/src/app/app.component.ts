@@ -83,15 +83,21 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
               private cookieService: AuthService) {
   }
 
-  ngOnInit() {
-    if (this.windowService.nativeDocument && this.windowService.nativeSessionStorage && this.windowService.nativeLocalStorage) {
-      localStorage.setItem('demoMode', 'false');
-
-      Promise.resolve().then(() => {
-        this.fetchTokensFromLogin();
-      });
+  async ngOnInit(): Promise<void> {
+    if (
+      this.windowService.nativeDocument &&
+      this.windowService.nativeSessionStorage &&
+      this.windowService.nativeLocalStorage
+    ) {
+      this.fetchTokensFromLogin();
 
       this.loadingScreen();
+
+      try {
+        await this.autoLogin();
+      } catch {
+        // Optional: handle fallback
+      }
 
       this.route.queryParams.subscribe(params => {
         const platform = params['platform'] || 'jobPortal';
@@ -138,37 +144,43 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  autoLogin() {
-    this.commonService.getSession().subscribe({
-      next: (userData) => {
-        this.cookieService.createUserID(userData.employeeId);
-        this.cookieService.createLevel(userData.userLevel);
-        this.commonService.getTokens(userData.email).subscribe((tokens) => {
-          this.cookieService.createAuthToken(tokens.accessToken);
-          this.cookieService.createRefreshToken(tokens.refreshToken);
-        })
-        this.cookieService.unlock();
-        if (userData.userLevel == '2') {
-          this.cookieService.createAdmin(userData.email);
+  autoLogin(): Promise<boolean> {
+    const alreadyInitialized = sessionStorage.getItem('sso-initialized');
+    if (alreadyInitialized) {
+      return Promise.resolve(true);
+    }
+
+    return new Promise((resolve, reject) => {
+      this.commonService.getSession().subscribe({
+        next: (userData) => {
+          this.cookieService.createUserID(userData.employeeId);
+          this.cookieService.createLevel(userData.userLevel);
+          if (userData.userLevel == '2') {
+            this.cookieService.createAdmin(userData.email);
+          } else if (userData.userLevel == '3') {
+            this.cookieService.createProAdmin(userData.email);
+          }
+          this.cookieService.unlock();
           userData.organizations?.forEach((organization: any) => {
             this.cookieService.createOrganizationID(organization.jobPortal || '');
           })
-        } else if (userData.userLevel == '3') {
-          this.cookieService.createProAdmin(userData.email);
-          userData.organizations?.forEach((organization: any) => {
-            this.cookieService.createOrganizationID(organization.jobPortal || '');
-          })
+          this.commonService.getTokens(userData.email).subscribe((tokens) => {
+            this.cookieService.createAuthToken(tokens.accessToken);
+            this.cookieService.createRefreshToken(tokens.refreshToken);
+            if (this.windowService.nativeSessionStorage)
+              sessionStorage.setItem('sso-initialized', 'true');
+            resolve(true);
+          });
+        },
+        error: () => {
+          this.alertService.successMessage('Claim your free account today!', 'Talent Boozt ✨');
+          reject();
         }
-      },
-      error: () => {
-        // fall back to login or registration screen
-        this.alertService.successMessage('Claim your free account today!', 'Talent Boozt ✨');
-      }
+      });
     });
   }
 
-  fetchTokensFromLogin(){
-
+  fetchTokensFromLogin(): void {
     if (this.windowService.nativeWindow) {
       const rawQuery = window.location.search;
       const params = new URLSearchParams(rawQuery);
@@ -179,7 +191,12 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       if (accessToken && refreshToken) {
         this.cookieService.createAuthToken(accessToken);
         this.cookieService.createRefreshToken(refreshToken);
-        this.autoLogin();
+
+        // Clean the URL to prevent re-triggering
+        params.delete('auth');
+        params.delete('reft');
+        const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+        window.history.replaceState({}, '', newUrl);
       }
     }
   }
