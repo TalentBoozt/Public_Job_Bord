@@ -9,7 +9,7 @@ import {ThemeService} from "../../../../services/theme.service";
 })
 export class OfferCard1Component implements OnInit{
 
-  isOfferActive = false;
+  isOfferActive = true;
   seatsLeft = 0;
 
   constructor(private credentialService: CredentialService,

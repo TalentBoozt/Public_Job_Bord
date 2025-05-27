@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {CookieService} from "ngx-cookie-service";
+import {WindowService} from "./common/window.service";
 
 
 @Injectable({
@@ -7,7 +8,7 @@ import {CookieService} from "ngx-cookie-service";
 })
 export class AuthService {
 
-  constructor(private cookieService: CookieService) { }
+  constructor(private cookieService: CookieService, private windowService: WindowService) { }
 
   public createUserID(token:any){
     this.cookieService.set('user-token-id',token, {expires: 60* 60* 24* 7, path: '/', sameSite: 'Strict', secure: true});
@@ -171,5 +172,17 @@ export class AuthService {
 
   public isRefreshToken(): boolean {
     return !!this.getRefreshToken();
+  }
+
+  public redirectToLogin() {
+    const referrer = this.getReferer();
+    const platform = this.getPlatform();
+    const promo = this.getPromotion();
+    if (this.windowService.nativeDocument) {
+      const aElm: HTMLAnchorElement = document.createElement('a');
+      aElm.href = 'https://login.talentboozt.com/login?redirectUri='+window.location.href+'?&plat='+platform+'&ref='+referrer+'&prom='+promo;
+      aElm.target = '_self';
+      aElm.click();
+    }
   }
 }

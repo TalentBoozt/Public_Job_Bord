@@ -35,6 +35,7 @@
     "gapi": "^0.0.3",
     "gsap": "^3.12.5",
     "moment": "^2.30.1",
+    "ng-recaptcha": "^13.2.1",
     "ng2-charts": "^4.0.1",
     "ngx-cookie-service": "^15.0.0",
     "ngx-stripe": "^18.1.0",
